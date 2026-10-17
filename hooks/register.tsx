@@ -2,7 +2,7 @@ import { atom, read, update } from 'claude-code'
 import type { Register, SessionRateLimit } from 'claude-code'
 
 import type { Part, Snap, Win } from '../types'
-import { layout } from './format'
+import { fixed, layout } from './format'
 
 const EMPTY: Snap = {
   model: null,
@@ -33,7 +33,15 @@ const readings = (v: Snap, ctx: number | undefined, limits: SessionRateLimit[]):
 })
 
 export const register: Register = on => {
+  // Windows 10's conhost crashes (0xc0000409) reflowing on a resize when the band's
+  // length follows the width; there the band keeps one length and truncates
+  let conhost = false
+
   on('session.start', async ($, e, next) => {
+    // inherited vars can mislead either way; a miss only costs the stretch or the guard
+    conhost = await Promise.all([$.env.get('OS'), $.env.get('WT_SESSION'), $.env.get('TERM_PROGRAM')])
+      .then(([os, wt, term]) => os === 'Windows_NT' && wt === undefined && term === undefined)
+      .catch(() => false)
     // redraw every minute so the reset countdowns move; no API call
     $.clock.every(60_000, () => update($, tick, n => n + 1))
     const usage = await $.session.usage()
@@ -71,7 +79,7 @@ export const register: Register = on => {
     await read($, tick)
     const v = await read($, snap)
     const now = await $.clock.now()
-    const parts = layout(v, now, e.props.bodyColumns)
+    const parts = conhost && e.surface === 'terminal' ? fixed(v, now) : layout(v, now, e.props.bodyColumns)
     const { Box, Text } = $.ui.resolve(e)
 
     return (

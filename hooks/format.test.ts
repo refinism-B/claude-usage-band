@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'claude-code/testing'
 
 import type { Part, Snap } from '../types'
-import { bar, countdown, effortLabel, layout, modelLabel, shown, tone } from './format'
+import { bar, countdown, effortLabel, fixed, layout, modelLabel, shown, tone } from './format'
 
 const NOW = Date.parse('2026-10-17T00:00:00Z')
 const MIN = 60_000
@@ -143,5 +143,9 @@ describe('layout', () => {
     const q = layout({ ...full, ctx: 66, five: { pct: 104 } }, NOW, 200)
     expect(partWith(q, '66%')?.tone).toBe('error')
     expect(partWith(q, '104%')?.tone).toBe('error')
+  })
+
+  test('fixed is the full line at any width', () => {
+    expect(text(fixed(full, NOW))).toBe(WIDE)
   })
 })

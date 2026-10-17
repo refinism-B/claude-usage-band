@@ -43,6 +43,10 @@
 - Claude Desktop 的 Code 分頁開本機 session 時也會顯示（見上方截圖，進度條外觀依 Desktop 字型略有不同）；VS Code 擴充套件的 Claude 面板不會顯示。
 - 提示列可用 `ctrl+x ctrl+a` 或點 `[-]` 收合。
 
+### 已知問題
+
+- **Windows 10 單獨開啟的 PowerShell 視窗（舊式主控台 conhost）**：這類視窗在拉大時，若輸入框上方那行的長度跟著寬度改變，conhost 本身會閃退（整個視窗關掉）。因此在這類視窗中，進度條固定為 10 格、不隨寬度伸縮；視窗比整行窄時，行尾直接截斷，7d 讀數與倒數可能看不到。Windows Terminal 與 VS Code 內建終端機不受影響，照常伸縮。
+
 ### 需求
 
 - Claude Code **2.1.302** 以上（mod 功能目前為 early access，API 可能隨版本變動）
@@ -103,6 +107,10 @@ The used part of each bar is green, turning yellow then red past a threshold (th
 - Designed for the terminal: tested in VS Code's integrated terminal on Windows. PowerShell, cmd and Git Bash draw through the same interface (macOS / Linux not yet tested).
 - It also shows in a local session of Claude Desktop's Code tab (see the screenshot above; the bars look slightly different in the Desktop font). The VS Code extension's Claude panel does not show it.
 - Collapse the band with `ctrl+x ctrl+a` or by clicking `[-]`.
+
+### Known issues
+
+- **A standalone PowerShell window on Windows 10 (the legacy conhost console)**: when such a window is enlarged while the line above the prompt changes length with the width, conhost itself crashes and the whole window closes. In these windows the bars therefore stay at 10 cells and don't stretch; when the window is narrower than the line, its end is cut off, so the 7d reading and countdowns may be hidden. Windows Terminal and VS Code's integrated terminal are unaffected and stretch as usual.
 
 ### Requirements
 

@@ -102,6 +102,9 @@ const stretch = (s: Snap, now: number, columns: number): Opts => {
   return { ...base, cells: Math.max(base.cells, cells) }
 }
 
+// the full line whatever the width; the Text truncates it
+export const fixed = (s: Snap, now: number): Part[] => build(s, now, STEPS[0] as Opts)
+
 export const layout = (s: Snap, now: number, columns: number): Part[] => {
   let parts: Part[] = []
   for (const o of [stretch(s, now, columns), ...STEPS.slice(1)]) {

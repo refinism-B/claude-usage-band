@@ -11,18 +11,19 @@ const LIMITS: SessionRateLimit[] = [
   { kind: 'seven_day', percentUsed: 18, resetsAt: new Date(NOW + 4560 * MIN).toISOString() },
 ]
 
-const props = (hasSurvey = false) => ({
+const props = (hasSurvey = false, bodyColumns = 100) => ({
   hasSurvey,
   isWorking: false,
   maxRows: 10,
-  bodyColumns: 100,
+  bodyColumns,
   scroll: { offset: 0, bodyRows: 10 },
   view: {},
 })
 
 // the test's hooks sit beneath the plugin and stand for the engine
-const engine = (on: On, rateLimits: SessionRateLimit[] = LIMITS) => {
+const engine = (on: On, rateLimits: SessionRateLimit[] = LIMITS, env: Record<string, string> = {}) => {
   mock.clock(on, { now: NOW })
+  mock.env(on, env)
   on('session.usage', () => ({ value: { startedAt: NOW, context: { percent: 31, window: 200_000 }, rateLimits } }))
   on('session.model', () => ({ value: 'claude-opus-5-5' }))
   on('session.start', (_$, e) => ({ cwd: e.cwd }))
@@ -46,8 +47,8 @@ const step = async ($: Engine, model: string, effort: string, agentId?: string) 
   return s.result
 }
 
-const line = async ($: Engine, surface: (typeof SURFACES)[number], hasSurvey = false) => {
-  const ui = await $.ui.mount({ plugin: 'usage-band', surface, component: 'AbovePrompt', props: props(hasSurvey) })
+const line = async ($: Engine, surface: (typeof SURFACES)[number], hasSurvey = false, columns = 100) => {
+  const ui = await $.ui.mount({ plugin: 'usage-band', surface, component: 'AbovePrompt', props: props(hasSurvey, columns) })
   const outer = await ui.find({ type: 'Text' })
   await ui.unmount()
   return outer
@@ -122,6 +123,40 @@ test('unused half of a bar is drawn in the subtle theme color', async ($, on) =>
     expect(texts.map(t => t.props.color)).toContain('#38B653')
     expect(texts.every(t => t.props.dimColor !== true)).toBe(true)
   }
+})
+
+// legacy conhost (Windows 10) crashes reflowing a band whose length follows the width
+test('legacy conhost: band ignores the width', async ($, on) => {
+  engine(on, LIMITS, { OS: 'Windows_NT' })
+  await start($)
+  const narrow = (await line($, 'terminal', false, 70))?.text ?? ''
+  const wide = (await line($, 'terminal', false, 180))?.text ?? ''
+  expect(wide).toBe(narrow)
+  expect(wide).toContain('7d')
+})
+
+test('windows terminal: band still stretches', async ($, on) => {
+  engine(on, LIMITS, { OS: 'Windows_NT', WT_SESSION: 'x' })
+  await start($)
+  const narrow = (await line($, 'terminal', false, 70))?.text ?? ''
+  const wide = (await line($, 'terminal', false, 180))?.text ?? ''
+  expect(wide.length).toBeGreaterThan(narrow.length)
+})
+
+test('vscode terminal on windows: band still stretches', async ($, on) => {
+  engine(on, LIMITS, { OS: 'Windows_NT', TERM_PROGRAM: 'vscode' })
+  await start($)
+  const narrow = (await line($, 'terminal', false, 70))?.text ?? ''
+  const wide = (await line($, 'terminal', false, 180))?.text ?? ''
+  expect(wide.length).toBeGreaterThan(narrow.length)
+})
+
+test('legacy conhost: desktop surface still stretches', async ($, on) => {
+  engine(on, LIMITS, { OS: 'Windows_NT' })
+  await start($)
+  const narrow = (await line($, 'desktop', false, 70))?.text ?? ''
+  const wide = (await line($, 'desktop', false, 180))?.text ?? ''
+  expect(wide.length).toBeGreaterThan(narrow.length)
 })
 
 test('spend_limit ignored', async ($, on) => {
