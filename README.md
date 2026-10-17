@@ -68,10 +68,20 @@
 claude plugin install usage-band --marketplace refinism-B/claude-usage-band
 ```
 
-### 更新 / 移除
+### 更新
+
+在 shell 依序執行，第一行抓 GitHub 上的最新版本，第二行更新已安裝的 mod：
 
 ```
+claude plugin marketplace update claude-usage-band
 claude plugin update usage-band
+```
+
+看到 `updated from <舊版> to <新版>` 後，重開 Claude Code 才會生效。也可以在 Claude Code 輸入 `/plugin` 從選單更新。
+
+### 移除
+
+```
 claude plugin uninstall usage-band
 ```
 
@@ -133,10 +143,20 @@ Or from a shell:
 claude plugin install usage-band --marketplace refinism-B/claude-usage-band
 ```
 
-### Update / remove
+### Update
+
+Run these in a shell, in order: the first fetches the latest version from GitHub, the second updates the installed mod:
 
 ```
+claude plugin marketplace update claude-usage-band
 claude plugin update usage-band
+```
+
+Once it prints `updated from <old> to <new>`, restart Claude Code for the change to take effect. You can also update from the `/plugin` menu inside Claude Code.
+
+### Remove
+
+```
 claude plugin uninstall usage-band
 ```
 
