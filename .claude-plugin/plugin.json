@@ -1,0 +1,9 @@
+{
+  "name": "usage-band",
+  "version": "0.1.0",
+  "description": "Model, effort, context and 5h/7d usage above the prompt",
+  "author": { "name": "refinism-B" },
+  "repository": "https://github.com/refinism-B/claude-usage-band",
+  "license": "MIT",
+  "types": "./types/index.d.ts"
+}

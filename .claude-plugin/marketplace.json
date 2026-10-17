@@ -1,0 +1,6 @@
+{
+  "name": "claude-usage-band",
+  "owner": { "name": "refinism-B" },
+  "description": "usage-band: model, effort, context and 5h/7d quota above the Claude Code prompt",
+  "plugins": [{ "name": "usage-band", "source": "./" }]
+}
