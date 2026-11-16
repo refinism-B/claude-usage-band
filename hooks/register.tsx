@@ -79,12 +79,14 @@ export const register: Register = on => {
     await read($, tick)
     const v = await read($, snap)
     const now = await $.clock.now()
-    const parts = conhost && e.surface === 'terminal' ? fixed(v, now) : layout(v, now, e.props.bodyColumns)
+    // desktop draws in a proportional font, so bodyColumns overstates the room: keep the full line and wrap it
+    const desk = e.surface !== 'terminal'
+    const parts = desk || conhost ? fixed(v, now) : layout(v, now, e.props.bodyColumns)
     const { Box, Text } = $.ui.resolve(e)
 
     return (
       <Box>
-        <Text wrap="truncate-end">
+        <Text wrap={desk ? 'wrap' : 'truncate-end'}>
           {parts.map((p, i) => (
             // dimColor was too close to the filled run; the theme's subtle gray reads darker
             <Text key={String(i)} color={paint(p)}>
