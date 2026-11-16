@@ -40,7 +40,7 @@
 - 只顯示主對話的 model / effort，subagent 的請求不影響。
 - 不呼叫任何 API、不耗額度：數字來自 Claude Code 每輪對話後自己推送的讀數。
 - 為終端機設計：已在 Windows 的 VS Code 內建終端機測試，PowerShell、cmd、Git Bash 走同一套介面（macOS / Linux 尚未實測）。
-- Claude Desktop 的 Code 分頁開本機 session 時也會顯示（見上方截圖，進度條外觀依 Desktop 字型略有不同）；VS Code 擴充套件的 Claude 面板不會顯示。
+- Claude Desktop 的 Code 分頁開本機 session 時也會顯示（見上方截圖，進度條外觀依 Desktop 字型略有不同），寬度不夠時會換到第二行，不截斷；VS Code 擴充套件的 Claude 面板不會顯示。
 - 提示列可用 `ctrl+x ctrl+a` 或點 `[-]` 收合。
 
 ### 已知問題
@@ -115,7 +115,7 @@ The used part of each bar is green, turning yellow then red past a threshold (th
 - Only the main conversation's model and effort are shown; subagent requests don't change them.
 - Makes no API calls and spends no quota: the numbers come from readings Claude Code pushes after each turn.
 - Designed for the terminal: tested in VS Code's integrated terminal on Windows. PowerShell, cmd and Git Bash draw through the same interface (macOS / Linux not yet tested).
-- It also shows in a local session of Claude Desktop's Code tab (see the screenshot above; the bars look slightly different in the Desktop font). The VS Code extension's Claude panel does not show it.
+- It also shows in a local session of Claude Desktop's Code tab (see the screenshot above; the bars look slightly different in the Desktop font); when the line is wider than the window it wraps to a second line instead of being cut off. The VS Code extension's Claude panel does not show it.
 - Collapse the band with `ctrl+x ctrl+a` or by clicking `[-]`.
 
 ### Known issues

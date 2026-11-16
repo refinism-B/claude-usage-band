@@ -102,11 +102,11 @@ test('yields to survey', async ($, on) => {
   }
 })
 
-test('truncates, never wraps', async ($, on) => {
+test('terminal truncates, other surfaces wrap', async ($, on) => {
   engine(on)
   await start($)
   for (const surface of SURFACES) {
-    expect((await line($, surface))?.props.wrap).toBe('truncate-end')
+    expect((await line($, surface))?.props.wrap).toBe(surface === 'terminal' ? 'truncate-end' : 'wrap')
   }
 })
 
@@ -151,12 +151,13 @@ test('vscode terminal on windows: band still stretches', async ($, on) => {
   expect(wide.length).toBeGreaterThan(narrow.length)
 })
 
-test('legacy conhost: desktop surface still stretches', async ($, on) => {
-  engine(on, LIMITS, { OS: 'Windows_NT' })
+test('desktop keeps the full line at any width', async ($, on) => {
+  engine(on)
   await start($)
   const narrow = (await line($, 'desktop', false, 70))?.text ?? ''
   const wide = (await line($, 'desktop', false, 180))?.text ?? ''
-  expect(wide.length).toBeGreaterThan(narrow.length)
+  expect(narrow).toBe(wide)
+  expect(narrow).toContain('(')
 })
 
 test('spend_limit ignored', async ($, on) => {
